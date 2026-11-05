@@ -4,6 +4,7 @@ name: Daily activity
 # so the built-in token is enough. Skips about 1 day in 5 so the graph looks natural.
 on:
   schedule:
+    - cron: "17 3 * * *" # 08:47 India time
     - cron: "17 10 * * *" # 15:47 India time
   workflow_dispatch:
 
