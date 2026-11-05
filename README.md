@@ -1,2 +1,2 @@
 # activity-bot
-Daily log entries.
+Under development !
