@@ -20,7 +20,7 @@ jobs:
           if [ "${{ github.event_name }}" = "schedule" ] && [ $((RANDOM % 5)) -eq 0 ]; then
             echo "Rest day."; exit 0
           fi
-          git config user.name "KRISHNA RAJU S"
+          git config user.name "Krishna Raju"
           git config user.email "100017249+KRISH-exe-29@users.noreply.github.com"
           n=$((RANDOM % 4 + 1))
           for i in $(seq "$n"); do
