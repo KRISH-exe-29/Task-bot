@@ -1,6 +1,6 @@
 name: Daily activity
 
-# Makes 0-4 commits a day as KRISH-exe-29. GitHub credits commits by author email,
+# Makes 10-88 commits a day as KRISH-exe-29. GitHub credits commits by author email,
 # so the built-in token is enough. Skips about 1 day in 5 so the graph looks natural.
 on:
   schedule:
@@ -22,7 +22,7 @@ jobs:
           fi
           git config user.name "Krishna Raju"
           git config user.email "100017249+KRISH-exe-29@users.noreply.github.com"
-          n=$((RANDOM % 4 + 1))
+          n=$((RANDOM % 79 + 10)) # 10-88
           for i in $(seq "$n"); do
             echo "$(TZ=Asia/Kolkata date '+%F %T')" >> log.txt
             git add log.txt
