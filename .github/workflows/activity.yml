@@ -1,7 +1,10 @@
 name: Daily activity
 
 # Makes 10-88 commits a day as KRISH-exe-29. GitHub credits commits by author email,
-# so the built-in token is enough. Skips about 1 day in 5 so the graph looks natural.
+# so the built-in token is enough for those. Skips about 1 day in 5 so the graph looks natural.
+# With a GH_PAT secret (your personal token), each run also opens an issue and a PR and
+# merges it, so Issues and Pull requests show up in the profile's Activity overview.
+# Without GH_PAT it falls back to pushing straight to main.
 on:
   schedule:
     - cron: "17 3 * * *" # 08:47 India time
@@ -17,17 +20,32 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Commit
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           if [ "${{ github.event_name }}" = "schedule" ] && [ $((RANDOM % 5)) -eq 0 ]; then
             echo "Rest day."; exit 0
           fi
           git config user.name "Krishna Raju"
           git config user.email "100017249+KRISH-exe-29@users.noreply.github.com"
+          day=$(TZ=Asia/Kolkata date +%F)
+          if [ -n "$GH_TOKEN" ]; then
+            branch="log/$(TZ=Asia/Kolkata date +%Y%m%d-%H%M)"
+            git checkout -b "$branch"
+          fi
           n=$((RANDOM % 79 + 10)) # 10-88
           for i in $(seq "$n"); do
             echo "$(TZ=Asia/Kolkata date '+%F %T')" >> log.txt
             git add log.txt
-            git commit -q -m "Log $(TZ=Asia/Kolkata date +%F) #$i"
+            git commit -q -m "Log $day #$i"
           done
-          git push
-          echo "Made $n commits."
+          if [ -z "$GH_TOKEN" ]; then
+            git push
+            echo "Made $n commits (no GH_PAT, pushed to main)."; exit 0
+          fi
+          git push -u origin "$branch"
+          issue=$(gh issue create --title "Log $day" --body "Daily log update: $n entries." | grep -o '[0-9]*$')
+          gh pr create --base main --head "$branch" --title "Log $day" --body "Closes #$issue"
+          # Merge commit (not squash) so every commit lands on main and keeps counting.
+          gh pr merge "$branch" --merge --delete-branch
+          echo "Made $n commits, issue #$issue, merged PR."
