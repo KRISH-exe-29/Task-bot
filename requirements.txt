@@ -1,5 +1,5 @@
 requests==2.34.2
 flask==2.3.0
 boto3==1.44.2
-python-dateutil==2.8.2
+python-dateutil==4.0.0
 rich==15.0.0
